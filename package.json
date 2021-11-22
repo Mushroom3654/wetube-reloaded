@@ -17,7 +17,9 @@
   "homepage": "https://github.com/Mushroom3654/wetube-reloaded#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "morgan": "^1.10.0"
+    "mongoose": "^6.0.13",
+    "morgan": "^1.10.0",
+    "pug": "^3.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",

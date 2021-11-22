@@ -1,9 +1,17 @@
 import { Router } from "express";
+import {
+    watch,
+    getEdit,
+    getUpload,
+    postEdit,
+    postUpload,
+} from "../controller/videoController";
 
 const videoRouter = Router();
 
-const handleWatchVideo = (req, res) => res.send('Watch Video');
 
-videoRouter.get('/watch', handleWatchVideo);
+videoRouter.get('/:id(\\d+)', watch);
+videoRouter.route('/:id(\\d+)/edit').get(getEdit).post(postEdit);
+videoRouter.route('/upload').get(getUpload).post(postUpload);
 
 export default videoRouter;
