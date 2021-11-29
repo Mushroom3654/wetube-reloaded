@@ -1,3 +1,15 @@
 extends layout
 
 block content
+    if errorMessage
+        p=errorMessage
+    form(method="POST")
+        input(name="userName", placeHolder="UerName", type="text")
+        input(name="password", placeHolder="Password", type="password")
+        input(type="submit", value="Login")
+        br
+        a(href="/users/github/start") Login With Github &rarr;
+    hr
+    div
+        span Dont have an account?
+        a(href="/join") Join now &rarr;

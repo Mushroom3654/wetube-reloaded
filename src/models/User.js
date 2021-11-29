@@ -10,7 +10,7 @@ const userSchema = new Schema({
 })
 
 userSchema.pre('save', async function() {
-   this.password = await hash(this.password, 'salts');
+    this.password = await hash(this.password, 5);
 });
 
 const User = model('User', userSchema);

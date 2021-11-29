@@ -4,10 +4,14 @@ block content
     if errorMessage
         p=errorMessage
     form(method="POST")
-        input(name="email", placeHolder="Email", type="text")
+        input(name="email", placeHolder="Email", type="email")
         input(name="userName", placeHolder="UerName", type="text")
         input(name="password", placeHolder="Password", type="password")
         input(name="password2", placeHolder="Password Verify", type="password")
         input(name="name", placeHolder="Name", type="text")
         input(name="location", placeHolder="Location", type="text")
         input(type="submit", value="Join")
+    hr
+    div
+        span Already have an account?
+        a(href="/login") Login now &rarr;
