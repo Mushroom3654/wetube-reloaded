@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    video(src="/" + video.fileUrl, controls)
+    div
+        p=video.description
+        small=video.createdAt
+    div
+        small uploaded by
+            a(href=`/users/${video.owner.id}`)=video.owner.name
+    if String(loggedInUser._id) === String(video.owner.id)
+        a(href=`${video.id}/edit`) Edit Video &rarr;
+        br
+        a(href=`${video.id}/delete`) Delete Video &rarr;

@@ -1,8 +1,10 @@
 import User from '../models/User';
 import fetch from 'node-fetch'
 import { compare } from 'bcrypt';
+import Video from "../models/Video";
 
-export const getJoin = (req, res) => res.render('join', { pageTitle: 'Join' });
+export const getJoin = (req, res) =>
+    res.render('join', { pageTitle: 'Join' });
 
 export const postJoin = async (req, res) => {
     const pageTitle = 'Join'
@@ -12,8 +14,8 @@ export const postJoin = async (req, res) => {
             throw { message: 'Password confirmation does not match', status: 400 };
         }
         const exists = await User.exists({$or: [{ email }]});
-        if (exists) throw { message: 'UserName or Email is already taken', status: 400 };
-        await User.create({
+        if (exists) throw { message: 'Email is already taken', status: 400 };
+        const user = await User.create({
             name,
             email,
             password,
@@ -25,9 +27,8 @@ export const postJoin = async (req, res) => {
     }
 };
 
-export const getLogin = (req, res) => {
+export const getLogin = (req, res) =>
     res.render('login', { pageTitle: 'Login' });
-}
 
 export const postLogin = async (req, res) => {
     try {
@@ -136,9 +137,102 @@ export const logout = (req, res) => {
     return res.redirect('/');
 };
 
-export const edit = (req, res) => res.send('Edit User');
+export const getEdit = (req, res) =>
+    res.render('users/edit-profile', { pageTitle: 'Edit Profile' });
+
+export const postEdit = async (req, res) => {
+    const pageTitle = 'Edit Profile';
+    try {
+        const {
+            session: {
+                user: { _id, email: sessionEmail }
+            },
+            body: { name, email, location },
+            file,
+        } = req;
+
+        if (sessionEmail !== email) {
+            const emailAlreadyUsed = await User.exists({ email });
+            if (emailAlreadyUsed) {
+                throw { message: 'email is aleady taken', status: 400 }
+            }
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(_id, {
+            avatarUrl: file?.path ?? req.session.user.avatarUrl,
+            name,
+            email,
+            location
+        }, { new: true })
+
+        req.session.user = updatedUser;
+
+        return res.redirect('/users/edit');
+    } catch (error) {
+        res
+            .status(error.status ?? 400)
+            .render('users/edit-profile', { pageTitle, errorMessage: error.message })
+    }
+};
+
+export const getChangePassword = (req, res) =>
+    res.render('users/change-password', { pageTitle: 'Change Password' });
+
+
+export const postChangePassword = async (req, res) => {
+    try {
+        const {
+            session: {
+                user: { _id }
+            },
+            body: { oldPassword, newPassword, newPasswordConfirm }
+        } = req;
+        const user = await User.findById(_id);
+        const ok = await compare(oldPassword, user.password);
+        if (!ok) {
+            throw { message: 'The current Password is incorrect', status: 400}
+        }
+        if (newPassword !== newPasswordConfirm) {
+            throw { message: 'New Password not confirm', status: 400}
+        }
+        user.password = newPassword;
+        await user.save();
+
+        return res.redirect('/users/logout');
+    } catch (error) {
+        console.warn(error)
+        res
+            .status(error.status ?? 400)
+            .render('users/change-password', { pageTitle: 'Change Password', errorMessage: error.message })
+    }
+}
+
+export const watch = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id).populate('videos');
+        if (!user) {
+            throw { message: 'User not Found', status: 404 }
+        }
+        console.log(user)
+        return res.render('users/profile', {
+            pageTitle: `${user.name} Profile`,
+            user,
+        })
+    } catch (error) {
+        console.log(error);
+        switch (error.status) {
+            case 404:
+                return res
+                    .status(error.status)
+                    .render('404', {
+                        pageTitle: `User not Found`,
+                        errorMessage: error.message
+                    })
+            default:
+                return res.redirect('/');
+        }
+    }
+};
 
 export const remove = (req, res) => res.send('Remove User');
-
-
-export const see = (req, res) => res.send('See');

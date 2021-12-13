@@ -8,10 +8,15 @@ const userSchema = new Schema({
     name: { type: String, required: true },
     password: { type: String },
     socialOnly: { type: Boolean, default: false },
+    videos: [
+        { type: Schema.Types.ObjectId, ref: 'Video' }
+    ]
 })
 
 userSchema.pre('save', async function() {
-    this.password = await hash(this.password, 5);
+    if (this.isModified('password')) {
+        this.password = await hash(this.password, 5);
+    }
 });
 
 const User = model('User', userSchema);

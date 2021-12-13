@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    img(src="/" + loggedInUser.avatarUrl)
+    form(method="POST", enctype="multipart/form-data")
+        label(for="avatar") Avatar
+        input(name="avatar", id="avatar", type="file", accept="image/*")
+        input(name="email", placeHolder="Email", type="email", value=loggedInUser.email)
+        input(name="name", placeHolder="Name", type="text", value=loggedInUser.name)
+        input(name="location", placeHolder="Location", type="text", value=loggedInUser.location)
+        input(type="submit", value="Save")
+        if !loggedInUser.socialOnly
+            hr
+            a(href="change-password") Change Password &rarr;
