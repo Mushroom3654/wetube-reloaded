@@ -1,8 +1,7 @@
 extends ../layout
 
 block content
-    img(src="/" + loggedInUser.avatarUrl)
-    form(method="POST", enctype="multipart/form-data")
+    form(method="POST", enctype="multipart/form-data").edit-profile__form
         label(for="avatar") Avatar
         input(name="avatar", id="avatar", type="file", accept="image/*")
         input(name="email", placeHolder="Email", type="email", value=loggedInUser.email)
@@ -10,5 +9,5 @@ block content
         input(name="location", placeHolder="Location", type="text", value=loggedInUser.location)
         input(type="submit", value="Save")
         if !loggedInUser.socialOnly
-            hr
-            a(href="change-password") Change Password &rarr;
+            div.edit-profile__password
+                a(href="change-password") Change Password &rarr;

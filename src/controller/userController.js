@@ -15,7 +15,7 @@ export const postJoin = async (req, res) => {
         }
         const exists = await User.exists({$or: [{ email }]});
         if (exists) throw { message: 'Email is already taken', status: 400 };
-        const user = await User.create({
+        await User.create({
             name,
             email,
             password,
@@ -53,19 +53,17 @@ export const postLogin = async (req, res) => {
 }
 
 export const startGithubLogin = (req, res) => {
-    const baseUrl = `https://github.com/login/oauth/authorize`;
     const config = {
         client_id: process.env.GH_CLIENT,
         allow_signup: false,
         scope: 'read:user user:email',
     }
     const params = new URLSearchParams(config).toString()
-    return res.redirect(`${baseUrl}?${params}`);
+    return res.redirect(`https://github.com/login/oauth/authorize?${params}`);
 }
 
 export const finishGithubLogin = async (req, res) => {
     try {
-        const baseUrl = 'https://github.com/login/oauth/access_token';
         const config = {
             client_id: process.env.GH_CLIENT,
             client_secret: process.env.GH_SECRET,
@@ -73,7 +71,7 @@ export const finishGithubLogin = async (req, res) => {
         }
 
         const params = new URLSearchParams(config).toString();
-        const finalUrl = `${baseUrl}?${params}`;
+        const finalUrl = `https://github.com/login/oauth/access_token?${params}`;
         // get AccessToken
         const tokenRequest = await (
             await fetch(finalUrl, {
@@ -109,7 +107,7 @@ export const finishGithubLogin = async (req, res) => {
             if (existingUser) {
                 req.session.loggedIn = true;
                 req.session.user = existingUser;
-                return res.redirect('/')
+                res.locals.loggedInUser = existingUser;
             } else {
                 const user = User.create({
                     avatarUrl: userData.avatar_url,
@@ -121,8 +119,9 @@ export const finishGithubLogin = async (req, res) => {
                 });
                 req.session.loggedIn = true;
                 req.session.user = user;
-                return res.redirect('/')
+                res.locals.loggedInUser = user;
             }
+            return res.redirect('/')
         } else {
             throw { status: 404, message: 'AccessToken Not found' }
         }
@@ -177,7 +176,6 @@ export const postEdit = async (req, res) => {
 
 export const getChangePassword = (req, res) =>
     res.render('users/change-password', { pageTitle: 'Change Password' });
-
 
 export const postChangePassword = async (req, res) => {
     try {

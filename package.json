@@ -7,8 +7,8 @@
     "url": "git+https://github.com/Mushroom3654/wetube-reloaded.git"
   },
   "scripts": {
-    "dev:assets": "nodemon",
-    "dev:server": "webpack"
+    "dev:assets": "webpack",
+    "dev:server": "nodemon"
   },
   "author": "kby3654 <kby3654@gmail.com> ",
   "license": "MIT",

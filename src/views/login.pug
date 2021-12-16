@@ -2,14 +2,12 @@ extends layout
 
 block content
     if errorMessage
-        p=errorMessage
+        span=errorMessage
     form(method="POST")
         input(name="email", placeHolder="Email", type="text")
         input(name="password", placeHolder="Password", type="password")
         input(type="submit", value="Login")
-        br
-        a(href="/users/github/start") Login With Github &rarr;
-    hr
-    div
+        include partials/social-login
+    div.auth-switch
         span Dont have an account?
         a(href="/join") Join now &rarr;

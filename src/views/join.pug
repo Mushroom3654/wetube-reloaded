@@ -2,15 +2,15 @@ extends layout
 
 block content
     if errorMessage
-        p=errorMessage
+        span=errorMessage
     form(method="POST")
-        input(name="email", placeHolder="Email", type="email")
-        input(name="password", placeHolder="Password", type="password")
-        input(name="password2", placeHolder="Password Verify", type="password")
-        input(name="name", placeHolder="Name", type="text")
-        input(name="location", placeHolder="Location", type="text")
+        input(name="email", placeHolder="Email", type="email", required)
+        input(name="password", placeHolder="Password", type="password", required)
+        input(name="password2", placeHolder="Password Verify", type="password", required)
+        input(name="name", placeHolder="Name", type="text", required)
+        input(name="location", placeHolder="Location", type="text", required)
         input(type="submit", value="Join")
-    hr
-    div
+        include partials/social-login
+    div.auth-switch
         span Already have an account?
         a(href="/login") Login now &rarr;
