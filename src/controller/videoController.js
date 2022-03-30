@@ -110,5 +110,22 @@ export const search = async (req, res) => {
         return res.render('search', { pageTitle: `Search`, videos: videos ?? [], keyword });
     } catch (error) {
         console.error('error while Search => ', error);
+        return res.redirect('video/search')
+    }
+}
+
+export const registerView = async (req, res) => {
+    try {
+        const video = await Video.findById(req.params.id);
+
+        if (!video) {
+            throw { status: 404, message: 'Not Found' }
+        }
+        video.meta.views = video.meta.views + 1;
+        await video.save();
+        return res.status(200);
+    } catch(error) {
+        console.log(error)
+        return res.status(error.status || 400)
     }
 }
